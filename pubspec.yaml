@@ -1,0 +1,34 @@
+name: trackhostel
+description: "House Traking Application by Flutter and Firebase"
+
+publish_to: 'none' 
+version: 1.0.0+1
+
+#<---------Environment Version-------------->
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+#<---------Dependencies-------------->
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  get:
+  flutter_screenutil:
+
+
+
+#<---------Dev Dependencies-------------->
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+
+
+
+#<---------Assets Declaration-------------->
+flutter:
+  uses-material-design: true
+  assets:
+     - assets/images/
