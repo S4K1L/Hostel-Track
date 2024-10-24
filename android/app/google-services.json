@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "417057707230",
+    "project_id": "track-hostel",
+    "storage_bucket": "track-hostel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417057707230:android:d34245c80a71a27f98de4f",
+        "android_client_info": {
+          "package_name": "com.s4k1l.trackhostel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcAkxiYqKOFgWN-kjEbsy99Z2ek1DG3jk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -16,11 +16,11 @@ class InputFormField extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding:  EdgeInsets.only(left: kDefaultPadding*2.r,right:kDefaultPadding*2.r,bottom: kDefaultPadding*2.r ),
+              padding:  EdgeInsets.only(left: kDefaultPadding*2.r,right:kDefaultPadding*2.r,bottom: kDefaultPadding*1.r ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,style: TextStyle(fontSize: 18.r,fontWeight: FontWeight.w700,letterSpacing: 1.5.r),),
+                  Text(title,style: TextStyle(fontSize: 16.r,fontWeight: FontWeight.w700,letterSpacing: 1.5.r),),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.r),
@@ -41,6 +41,13 @@ class InputFormField extends StatelessWidget {
                         focusColor: kPrimaryColor,
                         border: InputBorder.none,
                       ),
+                      validator: (value){
+                        if(controller.value.text == null)
+                          {
+                            return 'Fill the box';
+                          }
+                        return null;
+                      },
                     ),
                   ),
                 ],

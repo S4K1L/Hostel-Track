@@ -7,3 +7,4 @@ const Color kWhiteColor = Colors.white;
 const Color kGreyColor = Colors.grey;
 const Color kBlueColor = Colors.blue;
 const Color kRedColor = Colors.red;
+const Color kYellow = Colors.yellowAccent;

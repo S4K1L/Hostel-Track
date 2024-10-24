@@ -11,7 +11,7 @@ class LogoContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 50.r,bottom: 50.r),
+      padding: EdgeInsets.only(top: 50.r,bottom: 25.r),
       child: Row(
         children: [
           const Spacer(),

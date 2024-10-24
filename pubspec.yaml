@@ -15,6 +15,22 @@ dependencies:
   cupertino_icons: ^1.0.6
   get:
   flutter_screenutil:
+  google_fonts: ^6.2.1
+  local_auth: ^2.3.0
+  firebase_core: ^3.5.0
+  firebase_auth: ^5.3.0
+  cloud_firestore: ^5.4.2
+  firebase_storage: ^12.3.1
+  image_picker: ^1.1.2
+  cached_network_image: ^3.2.3
+  intl:
+  animated_splash_screen:
+  skeletonizer: ^1.4.2
+  lottie: ^1.2.2
+  liquid_progress_indicator_v2: ^0.5.0
+  google_maps_flutter:
+  location:
+  webview_flutter: ^4.7.0
 
 
 
