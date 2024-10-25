@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         title: 'Track Hostel',
         debugShowCheckedModeBanner: false,
-        initialRoute: RoutesPath.login,
+        initialRoute: RoutesPath.initialization,
         getPages: pages,
       ),
     );

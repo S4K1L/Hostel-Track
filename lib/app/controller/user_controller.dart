@@ -15,6 +15,7 @@ class UserController extends GetxController {
   var user = UserModel().obs;
   var hostel = HostelModel().obs;
   var status = StatusModel().obs;
+  var history = <dynamic>[].obs;
   var hostelList = <String>[].obs; // List to store hostel names
   var isLoading = false.obs;
 
@@ -57,7 +58,6 @@ class UserController extends GetxController {
     }
   }
 
-
   // Logout method
   Future<void> logout() async {
     try {
@@ -99,10 +99,8 @@ class UserController extends GetxController {
               (index) => CupertinoActionSheetAction(
             child: Text(hostelNames[index]),
             onPressed: () {
-              // Set selected hostel name instantly
               hostel.value.hostelName = hostelNames[index];
-
-              // Dismiss the picker
+              storeCheckIn(hostel.value.hostelName);
               Navigator.of(context).pop();
             },
           ),
@@ -115,8 +113,20 @@ class UserController extends GetxController {
     );
   }
 
+  Future<void> checkIn() async {
+    try {
+      isLoading.value = true; // Start loading
+      showHostelPicker(Get.context!);
+    } catch (e) {
+      // Handle error
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false; // Stop loading
+    }
+  }
+
   // Function to store check-in time with user data
-  Future<void> storeCheckIn(String hostel) async {
+  Future<void> storeCheckIn(String? hostel) async {
     try {
       isLoading(true);
       User? currentUser = _auth.currentUser;
@@ -129,7 +139,7 @@ class UserController extends GetxController {
         // Check if the user has already checked in today
         QuerySnapshot existingCheckIn = await _firestore
             .collection('status')
-            .where('uid', isEqualTo: user.value.uid)
+            .where('uid', isEqualTo: currentUser.uid)
             .where('hostel', isEqualTo: status.value.hostel)
             .get();
 
@@ -147,7 +157,6 @@ class UserController extends GetxController {
         String formattedTime = DateFormat('hh:mm a').format(now); // e.g., 09:00 AM
 
         await _firestore.collection('status').doc().set({
-          'name': currentUser.displayName ?? 'No Name',
           'email': currentUser.email ?? 'No Email',
           'checkIn': formattedTime,
           'checkOut': '',
@@ -162,6 +171,7 @@ class UserController extends GetxController {
           'Check-In time has been recorded!',
           snackPosition: SnackPosition.BOTTOM,
         );
+        Get.offAndToNamed(Get.currentRoute); // Or replace with setState if inside StatefulWidget
       }
     } catch (e) {
       print("Error storing check-in data: $e");
@@ -185,15 +195,16 @@ class UserController extends GetxController {
         DateTime now = DateTime.now();
         String formattedDate = DateFormat('EEE, d MMM yyyy').format(now); // e.g., Fri, 21 June 2024
 
-        // Check if the user has already checked in today
-        QuerySnapshot existingCheckIn = await _firestore
+        // Check if the user has already checked out today or if there's an existing check-in
+        QuerySnapshot existingStatus = await _firestore
             .collection('status')
-            .where('uid', isEqualTo: user.value.uid)
-            .where('checkOut', isEqualTo: null)
+            .where('uid', isEqualTo: currentUser.uid)
+            .where('checkOutDate', isEqualTo: '')
+            .where('checkInDate', isEqualTo: formattedDate) // ensure today’s check-in record is fetched
             .get();
 
-        if (existingCheckIn.docs.isNotEmpty) {
-          // If a check-in record exists for today, show a message and return
+        if (existingStatus.docs.isEmpty) {
+          // If no record exists or the user has already checked out, show a message and return
           Get.snackbar(
             'Already Checked-Out',
             'You have already checked out today!',
@@ -202,25 +213,40 @@ class UserController extends GetxController {
           return; // Exit the function
         }
 
-        // Proceed to store check-in if no record exists for today
+        // Proceed to update check-out time for the existing record
         String formattedTime = DateFormat('hh:mm a').format(now); // e.g., 09:00 AM
 
-        await _firestore.collection('status').doc().set({
+        await existingStatus.docs.first.reference.update({
           'checkOutDate': formattedDate,
           'checkOut': formattedTime,
-        }, SetOptions(merge: true));
+          'uid': '',
+          'userUid': currentUser.uid,
+        });
 
+        // Reset the StatusModel data
+        status.value = StatusModel(
+          checkInDate: '',
+          checkOutDate: '',
+          checkIn: '',
+          checkOut: '',
+          hostel: '',
+        );
+
+        // Show a success message
         Get.snackbar(
           'Check-Out Success',
           'Check-Out time has been recorded!',
           snackPosition: SnackPosition.BOTTOM,
         );
+
+        // Refresh the page or navigate to a fresh instance of the page
+        Get.offAndToNamed(Get.currentRoute); // Or replace with setState if inside StatefulWidget
       }
     } catch (e) {
-      print("Error storing check-Out data: $e");
+      print("Error storing check-out data: $e");
       Get.snackbar(
         'Check-Out Failed',
-        'An error occurred while recording check-Out. Please try again.',
+        'An error occurred while recording check-out. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -264,5 +290,42 @@ class UserController extends GetxController {
     }
   }
 
+  Future<void> fetchHistory() async {
+    try {
+      isLoading(true); // Show loading indicator
+      User? currentUser = _auth.currentUser;
+
+      if (currentUser != null) {
+        // Query Firestore for status documents where the logged-in user checked in or out
+        QuerySnapshot snapshot = await _firestore
+            .collection('status')
+            .where('userUid', isEqualTo: currentUser.uid)
+            .orderBy('checkInDate', descending: true) // Order by most recent
+            .get();
+
+        // Clear previous history data
+        history.clear();
+
+        // Process each document in the snapshot
+        for (var doc in snapshot.docs) {
+          // Add each document data as a Map to history list
+          history.add({
+            'hostel': doc['hostel'] ?? 'No Hostel',
+            'checkInDate': doc['checkInDate'] ?? 'No Check-In Date',
+            'checkOutDate': doc['checkOutDate'] ?? 'No Check-Out Date',
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching user status history: $e");
+      Get.snackbar(
+        'Error',
+        'Failed to retrieve status history. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading(false); // Hide loading indicator
+    }
+  }
 
 }
