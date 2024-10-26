@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:trackhostel/res/constant/colors.dart';
-import 'package:trackhostel/view/check_out/check_out.dart';
-import 'package:trackhostel/view/history/history.dart';
-import 'package:trackhostel/view/home/home.dart';
+import 'package:trackhostel/view/admin/add_hostel/add_hostel.dart';
+import 'package:trackhostel/view/admin/hostel_list/hostel_list.dart';
 import 'package:trackhostel/view/profile/profile.dart';
 
 
-class UserBottomBar extends StatefulWidget {
-  const UserBottomBar({super.key});
+class AdminBottomBar extends StatefulWidget {
+  const AdminBottomBar({super.key});
 
   @override
-  State<UserBottomBar> createState() => _BottomBarState();
+  State<AdminBottomBar> createState() => _BottomBarState();
 }
 
-class _BottomBarState extends State<UserBottomBar> {
+class _BottomBarState extends State<AdminBottomBar> {
   int indexColor = 0;
   List<Widget> screens = [
-    const HomePage(),
-    const CheckOutPage(),
-    HistoryPage(),
+    const AddHostelPage(),
+    const HostelListPage(),
     UserProfilePage()
   ];
 
@@ -49,8 +47,7 @@ class _BottomBarState extends State<UserBottomBar> {
                     children: [
                       _buildBottomNavigationItem(Icons.home, 0),
                       _buildBottomNavigationItem(Icons.gavel_outlined, 1),
-                      _buildBottomNavigationItem(Icons.history_toggle_off, 2),
-                      _buildBottomNavigationItem(Icons.person_sharp, 3),
+                      _buildBottomNavigationItem(Icons.person_sharp, 2),
                     ],
                   ),
                 ),

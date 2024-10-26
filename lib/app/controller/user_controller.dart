@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:trackhostel/app/controller/login_controller.dart';
+import 'package:trackhostel/app/controller/signup_controller.dart';
 import 'package:trackhostel/models/hostel_model.dart';
 import 'package:trackhostel/models/status_model.dart';
 import 'package:trackhostel/models/user_model.dart';
@@ -16,7 +18,7 @@ class UserController extends GetxController {
   var hostel = HostelModel().obs;
   var status = StatusModel().obs;
   var history = <dynamic>[].obs;
-  var hostelList = <String>[].obs; // List to store hostel names
+  var hostelList = <String>[].obs;
   var isLoading = false.obs;
 
   // Firebase instances
@@ -24,12 +26,20 @@ class UserController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
+
+  @override
+  void onInit() {
+    fetchLoggedInUser();
+    fetchHistory();
+    super.onInit();
+  }
+
+
   // Fetch the logged-in user's data
   Future<void> fetchLoggedInUser() async {
+    isLoading.value = true;
     try {
-      isLoading(true);
       User? currentUser = _auth.currentUser;
-
       if (currentUser != null) {
         DocumentSnapshot doc = await _firestore.collection('users').doc(currentUser.uid).get();
         user.value = UserModel.fromSnapshot(doc);
@@ -37,7 +47,7 @@ class UserController extends GetxController {
     } catch (e) {
       print("Error fetching user data: $e");
     } finally {
-      isLoading(false);
+      isLoading.value = false;
     }
   }
 
@@ -63,7 +73,19 @@ class UserController extends GetxController {
     try {
       if (_auth.currentUser != null) {
         await _auth.signOut();
+
+        // Reset all models to their initial empty state
         user.value = UserModel();
+        hostel.value = HostelModel();
+        status.value = StatusModel();
+        history.clear();
+        hostelList.clear();
+
+        // Clear cache and delete UserController (if needed)
+        await Get.delete<UserController>();
+        await Get.delete<LoginController>();
+        await Get.delete<SignupController>();
+
         Get.snackbar(
           'Logout Success',
           'You have successfully logged out!',
@@ -72,7 +94,9 @@ class UserController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           margin: const EdgeInsets.only(bottom: 30, left: 16, right: 16),
         );
-        Get.offAndToNamed(RoutesPath.login);
+
+        // Navigate to login page
+        Get.offAllNamed(RoutesPath.login);
       } else {
         if (kDebugMode) {
           print("No user is currently signed in");
@@ -86,6 +110,8 @@ class UserController extends GetxController {
       rethrow;
     }
   }
+
+
 
   showHostelPicker(BuildContext context) {
     final hostelNames = hostelList;
@@ -300,7 +326,7 @@ class UserController extends GetxController {
         QuerySnapshot snapshot = await _firestore
             .collection('status')
             .where('userUid', isEqualTo: currentUser.uid)
-            .orderBy('checkInDate', descending: true) // Order by most recent
+            .orderBy('checkInDate', descending: true)
             .get();
 
         // Clear previous history data

@@ -3,27 +3,15 @@ import 'package:get/get.dart';
 import 'package:trackhostel/app/controller/user_controller.dart';
 import 'package:trackhostel/res/constant/colors.dart';
 
-class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key});
-
-  @override
-  _HistoryPageState createState() => _HistoryPageState();
-}
-
-class _HistoryPageState extends State<HistoryPage> {
+class HistoryPage extends StatelessWidget {
+  HistoryPage({super.key});
   final UserController userController = Get.put(UserController());
-
-  @override
-  void initState() {
-    super.initState();
-    userController.fetchHistory(); // Fetch history on page load
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackGroundColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("HISTORY",style: TextStyle(fontSize: 26,color: kWhiteColor,fontWeight: FontWeight.w500,letterSpacing: 3),),
         centerTitle: true,
         backgroundColor: Colors.green,

@@ -61,6 +61,7 @@ class SignupController extends GetxController {
             'email': userModel.value.email,
             'password': userModel.value.password,
             'address': userModel.value.address,
+            'role': 'user',
             'uid': user.uid,
           });
 

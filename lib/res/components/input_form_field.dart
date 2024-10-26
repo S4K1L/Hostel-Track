@@ -42,7 +42,7 @@ class InputFormField extends StatelessWidget {
                         border: InputBorder.none,
                       ),
                       validator: (value){
-                        if(controller.value.text == null)
+                        if(value == null)
                           {
                             return 'Fill the box';
                           }

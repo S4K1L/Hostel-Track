@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:trackhostel/res/components/admin_bottom_bar.dart';
 import 'package:trackhostel/res/components/bottom_navbar.dart';
 import 'package:trackhostel/utils/auth_gate/auth_gate.dart';
 import 'package:trackhostel/view/home/home.dart';
@@ -10,6 +11,7 @@ class RoutesPath {
   static String signup = '/signup';
   static String home = '/home';
   static String bottomBar = '/bottomBar';
+  static String adminBottomBar = '/adminBottomBar';
   static String initialization = '/initialization';
 }
 
@@ -17,12 +19,12 @@ final pages = [
   GetPage(
     name: RoutesPath.initialization,
     page: () => const AuthGate(),
-    transition: Transition.downToUp
+    transition: Transition.rightToLeft
   ),
   GetPage(
     name: RoutesPath.login,
     page: () => const LoginPage(),
-    transition: Transition.downToUp
+    transition: Transition.rightToLeft
   ),
   GetPage(
     name: RoutesPath.signup,
@@ -37,6 +39,11 @@ final pages = [
   GetPage(
     name: RoutesPath.bottomBar,
     page: () => const UserBottomBar(),
+    transition: Transition.rightToLeft
+  ),
+  GetPage(
+    name: RoutesPath.adminBottomBar,
+    page: () => const AdminBottomBar(),
     transition: Transition.rightToLeft
   ),
 ];
